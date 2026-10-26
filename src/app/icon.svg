@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="94 9 212 212">
+<rect x="94" y="9" width="212" height="212" rx="40" fill="#0a0a0a"/>
+<g fill="#c5b79b">
+<rect x="170" y="60" width="10" height="110"/><rect x="164" y="60" width="22" height="3"/>
+<rect x="120" y="164" width="60" height="6"/><rect x="120" y="153" width="3" height="17"/>
+<rect x="220" y="60" width="10" height="110"/><rect x="214" y="60" width="22" height="3"/>
+<rect x="220" y="164" width="60" height="6"/><rect x="277" y="153" width="3" height="17"/>
+<polygon points="132,122 166,126 166,132 135,130"/><polygon points="268,122 234,126 234,132 265,130"/>
+<polygon points="118,106 136,103 134,110 121,111"/><polygon points="282,106 264,103 266,110 279,111"/>
+<polygon points="182,64 193,72 194.5,86 189,99 182,84"/><polygon points="218,64 207,72 205.5,86 211,99 218,84"/>
+<polygon points="196,72 204,72 202.5,85 197.5,85"/><polygon points="197.5,87 202.5,87 206,138 200,146 194,138"/>
+</g>
+<g fill="none" stroke="#c5b79b" stroke-width="1.5" stroke-linejoin="round"><path d="M166 78L140 110L128 116L126 156"/><path d="M234 78L260 110L272 116L274 156"/></g>
+<g fill="none" stroke="#c5b79b" stroke-width="1" stroke-linecap="round"><path d="M182 86L196 162"/><path d="M218 86L204 162"/></g>
+</svg>

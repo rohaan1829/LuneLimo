@@ -1,0 +1,312 @@
+@import "tailwindcss";
+
+/* Brand tokens, taken from the Lune Limo logo files. */
+@theme {
+  --color-ink: #0a0a0a;
+  --color-champagne: #c5b79b;
+  --color-champagne-deep: #8c826f;
+  --color-moon: #edebe6;
+
+  --ease-lune: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@theme inline {
+  --font-display: var(--font-cormorant), "Cormorant Garamond", Didot, serif;
+  --font-sans: var(--font-inter), "Inter", "Helvetica Neue", Arial, sans-serif;
+}
+
+/* The sky: page background and foreground move from night to day and back as you scroll.
+   --bg is scrubbed by GSAP; --fg flips by [data-sky] and eases via @property. */
+@property --fg {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #edebe6;
+}
+
+@property --fg-dim {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #8c826f;
+}
+
+:root {
+  --bg: #0a0a0a;
+  --fg: #edebe6;
+  --fg-dim: #8c826f;
+  --accent: #c5b79b;
+  --accent-ink: #0a0a0a;
+  color-scheme: dark;
+  transition:
+    --fg 0.6s var(--ease-lune),
+    --fg-dim 0.6s var(--ease-lune);
+}
+
+:root[data-sky="day"] {
+  --fg: #0a0a0a;
+  --fg-dim: #4d473c;
+  --accent: #0a0a0a;
+  --accent-ink: #c5b79b;
+  color-scheme: light;
+}
+
+html {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+body {
+  font-family: var(--font-inter), "Helvetica Neue", Arial, sans-serif;
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-champagne);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 1px solid var(--color-champagne);
+  outline-offset: 4px;
+}
+
+/* Buttons share one shape; the fill follows the sky. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  height: 3.25rem;
+  padding-inline: 1.75rem;
+  border-radius: 999px;
+  font-size: 0.9375rem;
+  letter-spacing: 0.01em;
+  transition:
+    background-color 0.4s var(--ease-lune),
+    color 0.4s var(--ease-lune),
+    border-color 0.4s var(--ease-lune);
+}
+
+.btn-solid {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.btn-solid:hover {
+  background: var(--fg);
+}
+
+.btn-line {
+  border: 1px solid color-mix(in oklab, var(--fg) 35%, transparent);
+  color: var(--fg);
+}
+
+.btn-line:hover {
+  border-color: var(--fg);
+}
+
+/* Hairline field used in the booking form. */
+.field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.field label {
+  font-size: 0.8125rem;
+  color: var(--fg-dim);
+}
+
+.field input,
+.field select {
+  appearance: none;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid color-mix(in oklab, var(--color-moon) 22%, transparent);
+  border-radius: 0;
+  padding: 0.5rem 0 0.75rem;
+  font-size: 1.0625rem;
+  color: var(--color-moon);
+  transition: border-color 0.3s var(--ease-lune);
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--color-champagne);
+}
+
+.field input::placeholder {
+  color: color-mix(in oklab, var(--color-moon) 30%, transparent);
+}
+
+.field [aria-invalid="true"] {
+  border-color: #d98c7a;
+}
+
+/* Long-form text on the terms and privacy pages. */
+.legal {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: color-mix(in oklab, var(--color-moon) 80%, transparent);
+}
+
+.legal section {
+  padding-top: clamp(3rem, 7vh, 4.5rem);
+  scroll-margin-top: 1.5rem;
+}
+
+.legal h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.85rem, 2.6vw, 2.4rem);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--color-moon);
+}
+
+.legal .legal-num {
+  font-family: var(--font-inter);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-champagne-deep);
+}
+
+.legal h3 {
+  font-weight: 500;
+  color: var(--color-moon);
+}
+
+.legal-intro > * + *,
+.legal section > * + * {
+  margin-top: 1rem;
+}
+
+.legal section > h2 + * {
+  margin-top: 1.5rem;
+}
+
+.legal section > * + h3 {
+  margin-top: 2rem;
+}
+
+.legal ul {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.legal li {
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.legal li::before {
+  content: "";
+  position: absolute;
+  top: 0.85em;
+  left: 0;
+  width: 0.6rem;
+  height: 1px;
+  background: var(--color-champagne);
+}
+
+.legal a {
+  color: var(--color-moon);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--color-champagne) 55%, transparent);
+  text-underline-offset: 4px;
+  transition: text-decoration-color 0.3s var(--ease-lune);
+}
+
+.legal a:hover {
+  text-decoration-color: var(--color-champagne);
+}
+
+.legal strong {
+  font-weight: 500;
+  color: var(--color-moon);
+}
+
+/* Opt-in checkbox on the booking form. Unticked by default, as consent has to be. */
+.check {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.875rem;
+  align-items: start;
+}
+
+.check input {
+  appearance: none;
+  display: grid;
+  place-items: center;
+  width: 1.125rem;
+  height: 1.125rem;
+  margin-top: 0.2rem;
+  border: 1px solid color-mix(in oklab, var(--color-moon) 40%, transparent);
+  border-radius: 0.25rem;
+  transition:
+    background-color 0.25s var(--ease-lune),
+    border-color 0.25s var(--ease-lune);
+}
+
+.check input::after {
+  content: "";
+  width: 0.55rem;
+  height: 0.3rem;
+  margin-top: -0.15rem;
+  border-bottom: 1.5px solid var(--color-ink);
+  border-left: 1.5px solid var(--color-ink);
+  transform: rotate(-45deg) scale(0);
+  transition: transform 0.25s var(--ease-lune);
+}
+
+.check input:checked {
+  background: var(--color-champagne);
+  border-color: var(--color-champagne);
+}
+
+.check input:checked::after {
+  transform: rotate(-45deg) scale(1);
+}
+
+.check label {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: color-mix(in oklab, var(--color-moon) 60%, transparent);
+}
+
+.check a {
+  color: var(--color-moon);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--color-champagne) 55%, transparent);
+  text-underline-offset: 3px;
+}
+
+.stage-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  transition: opacity 0.5s var(--ease-lune);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+@keyframes cue {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(200%);
+  }
+}
