@@ -8,7 +8,6 @@ import { scrollToTarget } from "@/components/providers/SmoothScroll";
 import { Logo } from "./Logo";
 
 const LINKS = [
-  ["#car", "The car"],
   ["#ride", "How it works"],
   ["#day", "Services"],
 ] as const;
@@ -40,7 +39,7 @@ export function Header() {
     >
       {/* A wash of the current sky colour, so copy scrolling underneath never fights the nav. */}
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-32 bg-linear-to-b from-(--bg) via-(--bg)/70 to-transparent" aria-hidden />
-      <a href="#top" onClick={go} className="flex items-center gap-3" aria-label="Lune Limo, back to top">
+      <a href="#car" onClick={go} className="flex items-center gap-3" aria-label="Lune Limo, back to top">
         <Logo variant="mark" className="h-8 w-auto text-champagne transition-colors duration-500 [[data-sky=day]_&]:text-ink" aria-hidden />
         <Logo variant="wordmark" className="hidden h-[0.8rem] w-auto text-champagne transition-colors duration-500 sm:block [[data-sky=day]_&]:text-ink" aria-hidden />
       </a>

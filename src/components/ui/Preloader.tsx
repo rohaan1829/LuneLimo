@@ -16,7 +16,7 @@ const MAX_MS = 6000;
 
 /**
  * The one orchestrated load moment: the jacket monogram builds itself and its lapel lines draw in,
- * then the curtain lifts and the moon rises. Holds until the moon textures and fonts are in,
+ * then the curtain lifts and the car's lights come on. Holds until the 3D stage and fonts are in,
  * so the first frame of the hero is the finished one.
  */
 export function Preloader() {
@@ -71,7 +71,8 @@ export function Preloader() {
           .to(el, { clipPath: "inset(0% 0% 100% 0%)", duration: 1.2, ease: "expo.inOut" }, "-=0.15")
           .add(() => {
             finish();
-            gsap.to(stage, { intro: 1, duration: 2.8, ease: "power3.out" });
+            // Linear here; CarAct eases each step of the ignition itself.
+            gsap.to(stage, { intro: 1, duration: 2.6, ease: "none" });
           }, "-=0.75");
 
       const check = () => {

@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     template: "%s | Lune Limo",
   },
   description:
-    "Private chauffeurs in black Cadillac Escalades. Airport transfers, corporate travel, weddings and late nights, booked at a fixed fare.",
+    "Private chauffeurs in Cadillac Escalades, Chevrolet Suburbans and GMC Yukons. Airport transfers, corporate travel, weddings and late nights, booked at a fixed fare.",
 };
 
 export const viewport: Viewport = {

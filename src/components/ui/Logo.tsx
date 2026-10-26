@@ -7,14 +7,6 @@ import type { Ref, SVGProps } from "react";
  * The wordmark is outlined from `lune-limo-a5s-black-print-6000px.png` (15 px per unit), so it matches
  * the print file exactly and never waits on a font. The tagline is Inter, as in the source SVG.
  */
-export const LOGO_VIEWBOX = { width: 400, height: 270 };
-
-/**
- * The smallest circle that holds the whole lockup, plus a margin. At the end of the intro the moon
- * fills it, and the logo stands in front as a silhouette.
- */
-export const LOGO_MOON = { cx: 200, cy: 191, r: 146 };
-
 const PIECES = {
   rects: [
     [170, 60, 10, 110],

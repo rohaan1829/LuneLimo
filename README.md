@@ -2,7 +2,7 @@
 
 Pitch site for Lune Limo, a private chauffeur service running a fleet of black Cadillac Escalades.
 
-The page plays as one night drive. A real moon (NASA lunar maps, custom shader) changes phase as you scroll, then settles full behind the logo, which builds in front of it as a silhouette and turns champagne as the moon goes out; an Escalade comes out of the dark lights-first; a top-down car drives the "how a ride goes" road into dawn; the sky turns champagne for the day services and back to night for the evening ones. A small clock in the corner runs through 24 hours over one scroll.
+The page plays as one night drive. It opens on the car: its running lights draw down as the page loads, then scrolling walks the camera around it, chapter by chapter, until it drives off; a top-down car drives the "how a ride goes" road into dawn; the sky turns champagne for the day services and back to night for the evening ones, with a real moon (NASA lunar maps, custom shader) rising at dusk. A small clock in the corner runs through 24 hours over one scroll.
 
 ## Run it
 
@@ -11,6 +11,17 @@ pnpm install
 pnpm dev        # http://localhost:3000
 pnpm build      # static prerender
 ```
+
+## Deploy
+
+Deployed to Vercel from this folder with the CLI; the project is not connected to GitHub.
+
+```bash
+export VERCEL_TOKEN=…   # personal token, kept out of the repo (on the main dev machine it's in the macOS Keychain)
+npx vercel@latest deploy --prod --scope roaans-projects
+```
+
+Production: https://lunelimo.vercel.app
 
 ## Stack
 
@@ -34,7 +45,7 @@ pnpm build      # static prerender
 | --- | --- |
 | `src/lib/content.ts` | All copy and contact details. Anything marked `CONFIRM` needs checking with the client. |
 | `src/lib/stage.ts` | Shared scroll state and easing helpers. |
-| `src/components/stage/MoonAct.tsx` | Moon shader, phases, logo docking, stars. |
+| `src/components/stage/MoonAct.tsx` | Moon shader and stars for the dusk moonrise. |
 | `src/components/ui/Logo.tsx` | The A5S lockup. Mark geometry from the brand SVG; wordmark outlined from the print PNG. |
 | `src/components/stage/CarAct.tsx` | Car camera path, lighting, wet ground. |
 | `src/components/stage/Escalade.tsx` | Stand-in Escalade model and its light rig. |

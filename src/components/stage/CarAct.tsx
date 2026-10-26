@@ -10,8 +10,8 @@ import { Escalade, applyRig, createRig } from "./Escalade";
 /* Camera keyframes around the car, in cylindrical coordinates (theta from the nose, towards
    the passenger side). Each beat holds long enough to read the copy that sits beside it. */
 const KEYS = [
-  { t: 0.0, theta: 0.0, r: 9.4, y: 0.95, ty: 0.86 }, // head-on in the dark
-  { t: 0.15, theta: 0.0, r: 8.8, y: 0.95, ty: 0.86 },
+  { t: 0.0, theta: 0.3, r: 10.2, y: 1.05, ty: 0.9 }, // the hero: nose-on with a little of the flank
+  { t: 0.15, theta: 0.3, r: 9.8, y: 1.05, ty: 0.9 },
   { t: 0.34, theta: 0.74, r: 10.8, y: 1.6, ty: 0.82 }, // front three-quarter
   { t: 0.56, theta: 1.56, r: 11.6, y: 1.25, ty: 0.92 }, // profile
   { t: 0.76, theta: 2.42, r: 10.8, y: 1.9, ty: 0.86 }, // rear three-quarter
@@ -92,7 +92,11 @@ export function CarAct({ reflections }: { reflections: boolean }) {
     [],
   );
 
-  useEffect(() => () => groundMaterial.dispose(), [groundMaterial]);
+  useEffect(() => {
+    // The car is the first thing on screen; the preloader holds until it has mounted.
+    stage.ready = true;
+    return () => groundMaterial.dispose();
+  }, [groundMaterial]);
 
   useFrame((state) => {
     const acts = activeActs();
@@ -119,10 +123,12 @@ export function CarAct({ reflections }: { reflections: boolean }) {
       rig.beams = 0;
       pose = { theta: 0.16, r: mix(10.5, 9.2, b), y: 1.0, ty: 0.9 };
     } else {
-      rig.drl = easeOut(range(c, 0.02, 0.1));
-      rig.head = range(c, 0.08, 0.13);
-      rig.tail = range(c, 0.1, 0.2);
-      reveal = easeInOut(range(c, 0.1, 0.3));
+      // Ignition plays once as the preloader lifts: running lights draw down, headlamps, then the body.
+      const i = stage.intro;
+      rig.drl = easeOut(range(i, 0, 0.35));
+      rig.head = range(i, 0.3, 0.42);
+      rig.tail = range(i, 0.35, 0.6);
+      reveal = easeInOut(range(i, 0.35, 1));
       carX = easeIn(range(c, 0.86, 1)) * 19;
       // Light shafts only read from the side; head-on they would wash the frame.
       rig.beams = rig.head * range(pose.theta, 0.35, 0.9);
@@ -137,8 +143,11 @@ export function CarAct({ reflections }: { reflections: boolean }) {
     groundMaterial.uniforms.uCarX.value = carX;
     groundMaterial.uniforms.uPool.value = rig.head * 0.16;
 
-    // Narrow screens pull back so the whole car fits; wide screens slide it right of the copy.
-    const fit = landscape ? 1 : clamp(1.55 / aspect, 1, 2.5);
+    // Narrow screens pull back just far enough for the car, as wide as it looks from this angle
+    // (5.4 m long, 2.1 m wide), to fill ~78% of the frame. Wide screens slide it right of the copy.
+    const span = Math.abs(Math.sin(pose.theta)) * 5.4 + Math.abs(Math.cos(pose.theta)) * 2.1;
+    const needed = span / 0.78 / (2 * Math.tan((cam.fov * Math.PI) / 360) * aspect);
+    const fit = landscape ? 1 : clamp(needed / pose.r, 1, 2.5);
     const r = pose.r * fit;
     cam.position.set(Math.cos(pose.theta) * r, pose.y + (fit - 1) * 0.6, Math.sin(pose.theta) * r);
     target.set(0, pose.ty, 0);

@@ -14,16 +14,14 @@ export const contact = {
   hours: "Open 24 hours, every day",
 };
 
+// CONFIRM: the fleet's models and colours.
+export const fleet = ["Cadillac Escalade", "Chevrolet Suburban", "GMC Yukon"] as const;
+
 export const carChapters = [
   {
-    id: "lights",
-    title: "You’ll see the lights first.",
-    body: "Every pickup starts the same way: a black Cadillac Escalade, washed and parked outside before you come down.",
-  },
-  {
     id: "fleet",
-    title: "One car. The whole fleet.",
-    body: "Every Lune Limo is a black Escalade, so the car you book is the car that arrives.",
+    title: "Escalade, Suburban or Yukon.",
+    body: "Full-size, washed and parked outside before you come down. Every car in the fleet is kept to the same standard, whichever one arrives.",
   },
   {
     id: "cabin",

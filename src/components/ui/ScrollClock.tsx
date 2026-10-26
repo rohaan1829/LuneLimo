@@ -13,8 +13,7 @@ const t = (h: number, m = 0) => h * 60 + m;
 /* One scroll is one day. Each section owns a stretch of the clock, so the time you see always
    matches the scene: the car at midnight, the airport run at dawn, the day list in daylight. */
 const SPANS: [string, number, number][] = [
-  ["#top", t(21), t(22, 30)],
-  ["#car", t(22, 30), t(26)],
+  ["#car", t(21), t(26)],
   ["#ride", t(28), t(30, 30)],
   ["#day", t(31), t(41)],
   ["#night", t(41, 30), t(44)],

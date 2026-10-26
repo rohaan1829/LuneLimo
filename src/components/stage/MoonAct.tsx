@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
-import { activeActs, easeInOut, easeOut, mix, range, stage } from "@/lib/stage";
+import { activeActs, easeOut, mix, range, stage } from "@/lib/stage";
 
 export const CAMERA_Z = 10;
 export const FOV = 30;
@@ -161,11 +161,7 @@ function makeStars(count: number) {
   return geo;
 }
 
-// Light directions (world space, pointing at the sun) for each beat of the intro.
-const L_HERO = new THREE.Vector3(-0.66, 0.3, 0.69).normalize(); // waxing gibbous, lit from the left
-const L_MID = new THREE.Vector3(-0.3, 0.62, -0.2).normalize();
-// Almost straight from the camera: a full moon for the logo to stand against.
-const L_FULL = new THREE.Vector3(-0.22, 0.16, 0.96).normalize();
+// Towards the sun (world space): a waxing gibbous, lit from the upper left.
 const L_NIGHT = new THREE.Vector3(-0.5, 0.35, 0.79).normalize();
 
 const MOON_TINT = new THREE.Color("#fff5e6");
@@ -239,15 +235,23 @@ export function MoonAct({ starCount }: { starCount: number }) {
     [],
   );
 
+  const gl = useThree((s) => s.gl);
+  const scene = useThree((s) => s.scene);
+  const camera = useThree((s) => s.camera);
+
   useEffect(() => {
-    stage.ready = true;
+    // The moon only appears at dusk, far down the page. Compile its shaders now, while the
+    // preloader is up or the page is idle, so it never costs a frame mid-scroll.
+    group.current.visible = true;
+    gl.compile(scene, camera);
+    group.current.visible = false;
     return () => {
       moonMaterial.dispose();
       haloMaterial.dispose();
       starMaterial.dispose();
       starGeometry.dispose();
     };
-  }, [moonMaterial, haloMaterial, starMaterial, starGeometry]);
+  }, [gl, scene, camera, moonMaterial, haloMaterial, starMaterial, starGeometry]);
 
   useFrame((state) => {
     const acts = activeActs();
@@ -265,52 +269,22 @@ export function MoonAct({ starCount }: { starCount: number }) {
     const vw = size.width;
     const vh = size.height;
     const landscape = vw > vh * 0.9;
-    const p = stage.hero;
-    const rise = easeOut(stage.intro);
 
-    // Screen-space choreography, in CSS px: big and off to the right, then centre stage as a
-    // crescent, then waxing to full behind the logo, which builds in front of it as a silhouette.
-    const heroR = landscape ? Math.min(vh * 0.36, vw * 0.27) : vw * 0.42;
-    const heroX = landscape ? vw * 0.7 : vw * 0.62;
-    const heroY = landscape ? vh * 0.42 : vh * 0.28;
-    const midR = Math.min(vw, vh) * 0.27;
-    const toMid = easeInOut(range(p, 0.08, 0.42));
-    const toDock = easeInOut(range(p, 0.52, 0.8));
+    // Moonrise at dusk: small, off to the right, rising as the sky turns dark again.
+    const n = stage.night;
+    const up = easeOut(range(n, 0.22, 0.45));
+    const out = 1 - range(n, 0.36, 0.47);
+    const r = Math.min(vw, vh) * (landscape ? 0.1 : 0.14);
+    let x = vw * (landscape ? 0.78 : 0.7);
+    let y = mix(vh * 0.6, vh * 0.26, up);
+    const opacity = range(n, 0.24, 0.4) * out;
+    tmpL.copy(L_NIGHT);
+    const earthshine = 0.04;
+    const haloStrength = 0.3;
+    const starOpacity = range(n, 0.26, 0.45) * out;
 
-    let x = mix(mix(heroX, vw / 2, toMid), stage.dock.x || vw / 2, toDock);
-    let y = mix(mix(heroY, vh * 0.45, toMid), stage.dock.y || vh * 0.4, toDock);
-    let r = mix(mix(heroR, midR, toMid), stage.dock.r || 60, toDock);
-    // The moon goes out first, then the logo turns champagne on the dark (Intro.tsx), so the two
-    // never pass through the same grey.
-    let opacity = 1 - range(p, 0.88, 0.935);
-
-    tmpL.copy(L_HERO).lerp(L_MID, range(p, 0.1, 0.5)).lerp(L_FULL, range(p, 0.5, 0.8)).normalize();
-    let earthshine = mix(0.05, 0, range(p, 0.6, 0.8));
-    let haloStrength = mix(0.22, 0.14, range(p, 0.3, 0.8));
-    let starOpacity = 1 - range(p, 0.75, 0.95) * 0.6;
-
-    // Moonrise on page load.
-    y += (1 - rise) * vh * 0.35;
-    opacity *= range(stage.intro, 0, 0.35);
-    starOpacity *= rise;
-
-    // Reprise: the moon comes back up as the sky turns dark again.
-    if (stage.view.night && !stage.view.intro) {
-      const n = stage.night;
-      const up = easeOut(range(n, 0.22, 0.45));
-      r = Math.min(vw, vh) * (landscape ? 0.1 : 0.14);
-      x = vw * (landscape ? 0.78 : 0.7);
-      y = mix(vh * 0.6, vh * 0.26, up);
-      const out = 1 - range(n, 0.36, 0.47);
-      opacity = range(n, 0.24, 0.4) * out;
-      tmpL.copy(L_NIGHT);
-      earthshine = 0.04;
-      haloStrength = 0.3;
-      starOpacity = range(n, 0.26, 0.45) * out;
-    }
-
-    // A touch of pointer parallax while the moon is free to move.
-    const free = (1 - toDock) * (stage.reducedMotion ? 0 : 1);
+    // A touch of pointer parallax.
+    const free = stage.reducedMotion ? 0 : 1;
     x += stage.pointer.x * 10 * free;
     y += stage.pointer.y * 8 * free;
 
@@ -318,8 +292,7 @@ export function MoonAct({ starCount }: { starCount: number }) {
     const unit = (2 * Math.tan((FOV * Math.PI) / 360) * CAMERA_Z) / vh;
     moon.current.position.set((x - vw / 2) * unit, -(y - vh / 2) * unit, 0);
     moon.current.scale.setScalar(r * unit);
-    // Drift a little while scrolling, but face the camera squarely once behind the logo.
-    const spin = BASE_SPIN + p * 0.5 * (1 - toDock) + clock.elapsedTime * 0.004;
+    const spin = BASE_SPIN + clock.elapsedTime * 0.004;
     moon.current.rotation.y = spin;
 
     halo.current.position.copy(moon.current.position).setZ(-0.05);

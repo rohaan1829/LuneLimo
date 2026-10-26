@@ -7,19 +7,16 @@
 export const stage = {
   /** Assets the hero needs (moon textures) have loaded. */
   ready: false,
-  /** Page-load moonrise, tweened 0 → 1 once the preloader lifts. */
+  /** The car's lights coming on at page load, tweened 0 → 1 once the preloader lifts. */
   intro: 0,
   /** Progress through the pinned sections, 0 → 1. */
-  hero: 0,
   car: 0,
   night: 0,
   book: 0,
   /** Whether each section is anywhere on screen. */
-  view: { intro: true, car: false, night: false, book: false },
+  view: { car: true, night: false, book: false },
   /** Pointer position, -1 → 1 on both axes. */
   pointer: { x: 0, y: 0 },
-  /** The circle behind the logo, on screen in CSS px, that the 3D moon settles into. */
-  dock: { x: 0, y: 0, r: 0 },
   reducedMotion: false,
   /** Scroll is held while the preloader is up. Only the home page has one; it sets this on mount. */
   locked: false,
@@ -41,9 +38,10 @@ export const easeIn = (t: number) => t * t * t;
 
 /** Which act of the 3D stage has something to show right now. */
 export function activeActs() {
-  const { view, hero, car } = stage;
-  const moon = (view.intro && hero < 0.985) || view.night;
-  const escalade = (view.car && car > 0 && car < 1) || view.book;
+  const { view, car } = stage;
+  const moon = view.night;
+  // The car is the hero, so it is on stage from the first frame until it has driven off.
+  const escalade = (view.car && car < 1) || view.book;
   return { moon, escalade };
 }
 

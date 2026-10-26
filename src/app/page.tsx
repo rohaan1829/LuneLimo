@@ -3,7 +3,6 @@ import { StageLoader } from "@/components/stage/StageLoader";
 import { Preloader } from "@/components/ui/Preloader";
 import { Header } from "@/components/ui/Header";
 import { ScrollClock } from "@/components/ui/ScrollClock";
-import { Intro } from "@/components/sections/Intro";
 import { CarSection } from "@/components/sections/CarSection";
 import { Ride } from "@/components/sections/Ride";
 import { Services } from "@/components/sections/Services";
@@ -22,7 +21,6 @@ export default function Home() {
       <StageLoader />
       <Header />
       <main className="relative z-10">
-        <Intro />
         <CarSection />
         <Ride />
         <Services />
